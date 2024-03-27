@@ -108,6 +108,12 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha1) {
       vad_data->state = ST_SILENCE;
     break;
 
+  case ST_MAYBE_VOICE:
+    break;
+
+  case ST_MAYBE_SILENCE:
+    break;
+
   case ST_UNDEF:
     break;
   }
