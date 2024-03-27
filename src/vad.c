@@ -14,7 +14,7 @@ const float FRAME_TIME = 10.0F; /* in ms. */
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT"
+  "UNDEF", "S", "V", "INIT", "MV", "MS"
 };
 
 const char *state2str(VAD_STATE st) {
@@ -55,11 +55,22 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate) {
+VAD_DATA * vad_open(float rate, float alpha0, float alpha1, float alpha2) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+
+  // inicialitzo alphes
+  vad_data->alpha0=alpha0;
+  vad_data->alpha1=alpha1;
+  vad_data->alpha2=alpha2;
+
+  // he d'inicialitzar llindars ????
+
+
+
+
   return vad_data;
 }
 
@@ -82,7 +93,7 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
  * using a Finite State Automata
  */
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha1) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float alpha2) {
 
   /* 
    * TODO: You can change this, using your own features,
@@ -96,22 +107,29 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha1) {
   case ST_INIT:
     vad_data->p0 = f.p;
     vad_data->state = ST_SILENCE;
+    vad_data->llindar0 = vad_Data->p0 + vad_data->alpha0;
+    vad_data->llindar1 = vad_data->llindar0 + vad_data->alpha1;
+    vad_data->llindar2 = vad_data->llindar1 + vad_data->alpha2; 
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->p0 + alpha1)
-      vad_data->state = ST_VOICE;
+    if (f.p > vad_data->llindar0)
+      vad_data->state = ST_MAYBE_VOICE;
     break;
 
   case ST_VOICE:
-    if (f.p < vad_data->p0 + alpha1)
-      vad_data->state = ST_SILENCE;
+    if (f.p < vad_data->llindar1)
+      vad_data->state = ST_MAYBE_SILENCE;
     break;
 
   case ST_MAYBE_VOICE:
+    if(f.p > vad_data->llindar2)
+      vad_data->state = ST_VOICE;
     break;
 
   case ST_MAYBE_SILENCE:
+    if(f.p < vad_data->llindar0)
+      vad_data->state = ST_SILENCE;
     break;
 
   case ST_UNDEF:
