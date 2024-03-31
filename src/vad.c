@@ -47,6 +47,8 @@ Features compute_features(const float *x, int N) {
   // zcr com a ajustment al final de tot
 
   feat.p = compute_power(x,N);
+  feat.zcr = compute_zcr(x,N,16000);
+  feat.am = compute_am(x,N);
   //feat.zcr = feat.p = feat.am = (float) rand()/RAND_MAX;
   return feat;
 }
@@ -66,10 +68,12 @@ VAD_DATA * vad_open(float rate, float alpha0, float alpha1, float alpha2) {
   vad_data->alpha1=alpha1;
   vad_data->alpha2=alpha2;
 
-  // he d'inicialitzar llindars ????
+  // inicialitzo llindars
+  vad_data->llindar0=0;
+  vad_data->llindar1=0;
+  vad_data->llindar2=0;
 
-
-
+  vad_data->num_t=0;
 
   return vad_data;
 }
@@ -107,29 +111,48 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float al
   case ST_INIT:
     vad_data->p0 = f.p;
     vad_data->state = ST_SILENCE;
-    vad_data->llindar0 = vad_Data->p0 + vad_data->alpha0;
+    vad_data->llindar0 = vad_data->p0 + vad_data->alpha0;
     vad_data->llindar1 = vad_data->llindar0 + vad_data->alpha1;
     vad_data->llindar2 = vad_data->llindar1 + vad_data->alpha2; 
+    vad_data->zcr=f.zcr;
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->llindar0)
+    if (f.p > vad_data->llindar0 || f.zcr > vad_data->zcr - vad_data->alpha2 || f.zcr > 1500)
       vad_data->state = ST_MAYBE_VOICE;
     break;
 
   case ST_VOICE:
-    if (f.p < vad_data->llindar1)
+    if (f.p < vad_data->llindar1 && vad_data->zcr + vad_data->alpha2 > f.zcr && f.zcr < 1800)
       vad_data->state = ST_MAYBE_SILENCE;
     break;
 
   case ST_MAYBE_VOICE:
-    if(f.p > vad_data->llindar2)
-      vad_data->state = ST_VOICE;
+    if(f.p > vad_data->llindar0){
+      if(f.p > vad_data->llindar2 || f.zcr > 1800){
+         vad_data->state = ST_VOICE;
+         vad_data->num_t=0;
+      } else {
+        vad_data->num_t ++;
+      }
+    } else {
+      vad_data->state = ST_SILENCE;
+      vad_data->num_t=0;
+  }
     break;
 
   case ST_MAYBE_SILENCE:
-    if(f.p < vad_data->llindar0)
-      vad_data->state = ST_SILENCE;
+    if(f.p < vad_data->llindar1 || f.zcr < 1800){
+      if(f.p < vad_data->llindar0){
+        vad_data->state = ST_SILENCE;
+        vad_data->num_t=0;
+      } else {
+        vad_data->num_t ++;
+      }
+    } else {
+      vad_data->state = ST_VOICE;
+      vad_data->num_t=0;
+    }
     break;
 
   case ST_UNDEF:

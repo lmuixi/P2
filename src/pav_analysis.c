@@ -3,7 +3,7 @@
 
 float compute_power(const float *x, unsigned int N) {
     float res = 0.0;
-    float sum = 0.0;        // si no funciona, inicialitzem a 1.e-6
+    float sum = 1.e-6;        // si no funciona, inicialitzem a 1.e-6
     for(int i=0; i<N; i++){
         sum += x[i]*x[i]; 
     }
