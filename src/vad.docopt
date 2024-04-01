@@ -9,9 +9,9 @@ Options:
    -i FILE, --input-wav=FILE   WAVE file for voice activity detection
    -o FILE, --output-vad=FILE  Label file with the result of VAD
    -w FILE, --output-wav=FILE  WAVE file with silences cleared
-   -0, --alpha0=FLOAT  alpha 0 de decisió veu/silenci [default: 2]
-   -1, --alpha1=FLOAT  alpha 1 de decisió veu/silenci [default: 0.5]
-   -2, --alpha2=FLOAT  alpha 2 de decisió veu/silenci [default: 4]    
+   -0, --alpha0=FLOAT  alpha 0 de decisió veu/silenci [default: 2.7]
+   -1, --alpha1=FLOAT  alpha 1 de decisió veu/silenci [default: 1.25]
+   -2, --alpha2=FLOAT  alpha 2 de decisió veu/silenci [default: 5.33]    
    -v, --verbose  Show debug information
    -h, --help     Show this screen
    --version      Show the version of the project

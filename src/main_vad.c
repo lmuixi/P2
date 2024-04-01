@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
   float frame_duration;   /* in seconds */
   unsigned int t, last_t; /* in frames */
 
-  float alpha0 = 2.7;       // 2.7 
-  float alpha1 = 1.25;        // 1.25
-  float alpha2 = 5.33;     // 5.33
+  float alpha0 = 2.7;        
+  float alpha1 = 1.25;        
+  float alpha2 = 5.33;    
 
   char	*input_wav, *output_vad, *output_wav;
 
@@ -36,7 +36,6 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  //alpha1 = atof(args.alpha1);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -84,6 +83,7 @@ int main(int argc, char *argv[]) {
 
     if (sndfile_out != 0) {
       /* TODO: copy all the samples into sndfile_out */
+      sf_write_float(sndfile_out, buffer, frame_size);
     }
 
     state = vad(vad_data, buffer, alpha0, alpha1, alpha2);
@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
 
     if (sndfile_out != 0) {
       /* TODO: go back and write zeros in silence segments */
+      
     }
   }
 

@@ -136,15 +136,36 @@ Ejercicios
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
 
+Después de grabar nuestro propio audio, denominado pav_2362.wav, utilizamos WaveSurfer para importarlo y, utilizando etiquetas, marcamos los diferentes segmentos. Hemos empleado la etiqueta (S) para indicar tramos de silencio y (V) para aquellos con voz. A continuación, adjuntamos una captura de pantalla donde se representan las distintas gráficas en el siguiente orden:
+	1. Potencia de pav_2362.wav
+	2. ZCR (Zero Crossing Rate) de pav_2362.wav
+	3. Trama de voz de pav_2362.wav
+
+![alt text](<Captura de pantalla 2024-04-01 122523.png>)
+
+Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de cada trama previamente definida.
+
+![alt text](<Captura de pantalla 2024-04-01 125247.png>)
 
 - A la vista de la gráfica, indique qué valores considera adecuados para las magnitudes siguientes:
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
 
+	  Al observar la gráfica de potencia, podemos concluir que aproximadamente a partir de los 25 dB, el segmento corresponde a voz. Es importante señalar que esto es factible gracias a que nuestro audio es muy limpio, sin ruidos de fondo ni interferencias. Por lo tanto, únicamente la voz contribuye al aumento de la potencia, lo que facilita su distinción del silencio.
+	  Asimismo destacar que este umbral de potencia solo es valido para este audio en concreto pues cada grabación tendrá potencias distintas dependiendo del locutor, ruido, interferencias etc…
+
 	* Duración mínima razonable de los segmentos de voz y silencio.
 
+	A partir de los resultados obtenidos con el comando "cat pav_2362.lab", podemos determinar las duraciones mínimas.
+	Por un lado, teniendo en cuenta la existencia de fraseo (unión de varias palabras sin pausa entre ellas) y escuchando el audio para asegurar, observamos que 0,4 segundos es la duración mínima de los segmentos de voz.
+	Por otro, observamos que la duración mínima de los segmentos de silencio es de 0,12 segundos.
+	
+
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+
+	Podemos concluir que al detectar letras sordas con baja potencia y alto ZCR, se obtiene un indicio relevante. Esto implica que, al observar un fragmento identificado como silencio breve y con un elevado número de ZCR, es probable que se trate de ruido o una letra sorda. En consecuencia, debería ser clasificado como voz.
+
 
 
 ### Desarrollo del detector de actividad vocal
@@ -152,14 +173,37 @@ Ejercicios
 - Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
   tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
 
+	Para la implementación del código hemos hecho pruebas con distintos valores de alpha0, alpha1 y alpha2 con el objetivo de encontrar aquellos valores que nos maximicen la puntuación `TOTAL`.
+	A partir de lo observado, hemos determinado los valores por defecto que aparecen al ejecutar el programa. 
+	Además, hemos determinado los valores de ZCR a partir de la observación de algunas señales de la base de datos y de la nuestra mediante el programa wavesurfer.
+
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
+![alt text](<Captura de pantalla 2024-04-01 210824.png>)
+
+![alt text](<Captura de pantalla 2024-04-01 210945.png>)
+
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
+	Podemos apreciar que el etiquetado generado por el programa se aproxima bastante al etiquetado manual realizado por nosotros. En general, la etiquetación es precisa; sin embargo, los mayores fallos se encuentran en los umbrales de los segmentos, al pasar de (S) a (V) y viceversa. Además, podemos observar que hay un segmento de silencio que el programa no ha detectado ya que su duración es muy corta.
+	En esta área, coexisten dos tipos de errores: en primer lugar, el algoritmo no alcanza una precisión del 100% para definir ambos estados con exactitud; y en segundo lugar, al tomar decisiones manualmente, tampoco podemos ser exactos en el 100% ya que no es evidente el instante exacto en el que termina o empieza un segmento de voz o de silencio. 
+	Aún así, el resultado total obtenido al comparar la detección automática con la realizada manualmente es muy elevado ya que las tramas identificadas erróneamente son muy pocas.
+
+![alt text](image-2.png)
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
+
+	Para trabajar con la base de datos, hemos elegido los valores de las alphas a partir de muchas pruebas y viendo con cúales se consigue un mejor resultado. Como se puede observar, el mejor resultado que hemos obtenido ha sido un 91,3%.
+
+![alt text](<Captura de pantalla 2024-04-01 211607.png>)
+
+	Queremos destacar que la puntuación `TOTAL` para voz es mejor que para silencio, hecho importante a tener en cuenta dependiendo de la situación en la que se use el detector automático.
+	En el caso de utilizar-se en un meet, consideramos que es mejor confundir el silencio por voz que al revés, ya que en ese caso podríamos estar silenciado a personas que están hablando.
+
+![alt text](<Captura de pantalla 2024-04-01 211851.png>)
 
 
 ### Trabajos de ampliación
@@ -175,11 +219,21 @@ Ejercicios
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
 
+  Hemos usado docopt_c para gestionar los valores de las alphas. Nos parece importante observar que dependiendo de la señal de voz con la que trabajemos, se pueden conseguir mejores resultados con valores de alpha más elevados ( en el caso de que la voz tenga una potencia muy elevada y la del ruido sea baja) o más bajos (en el caso de que el hablante hable bajo). 
+  El mensaje de ayuda que aparece por el terminal es el siguiente:
+
+![alt text](image-3.png)
+
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
 
 - Indique a continuación si ha realizado algún tipo de aportación suplementaria (algoritmos de detección o 
   parámetros alternativos, etc.).
+
+  Hemos decidido usar los valores de ZCR como condición para determinar si una trama era voz o silencio.
+  También hemos añadido dos estados intermedios (MAYBE_VOICE y MAYBE_SILENCE) para determinar mejor si un tramo es voz o silencio.
+  Además, hemos añadido 2 umbrales, alpha1 y alpha2. Estos umbrales nos permiten separar los umbrales utilizados para voz y para silencio aparte de obtener mejores resultados con ellos.
+  Para pasar de MAYBE_VOICE a VOICE utilizamos alpha2 y para pasar de VOICE a MAYBE_SILENCE utilizamos alpha1.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.

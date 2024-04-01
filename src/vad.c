@@ -118,12 +118,12 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alpha0, float alpha1, float al
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->llindar0 || f.zcr > vad_data->zcr - vad_data->alpha2 || f.zcr > 1500)
+    if (f.p > vad_data->llindar0 || f.zcr > vad_data->zcr - vad_data->alpha2)
       vad_data->state = ST_MAYBE_VOICE;
     break;
 
   case ST_VOICE:
-    if (f.p < vad_data->llindar1 && vad_data->zcr + vad_data->alpha2 > f.zcr && f.zcr < 1800)
+    if (f.p < vad_data->llindar1 && vad_data->zcr + vad_data->alpha2 > f.zcr)
       vad_data->state = ST_MAYBE_SILENCE;
     break;
 
