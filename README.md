@@ -189,7 +189,7 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
 	Podemos apreciar que el etiquetado generado por el programa se aproxima bastante al etiquetado manual realizado por nosotros. En general, la etiquetación es precisa; sin embargo, los mayores fallos se encuentran en los umbrales de los segmentos, al pasar de (S) a (V) y viceversa. Además, podemos observar que hay un segmento de silencio que el programa no ha detectado ya que su duración es muy corta.
 	En esta área, coexisten dos tipos de errores: en primer lugar, el algoritmo no alcanza una precisión del 100% para definir ambos estados con exactitud; y en segundo lugar, al tomar decisiones manualmente, tampoco podemos ser exactos en el 100% ya que no es evidente el instante exacto en el que termina o empieza un segmento de voz o de silencio. 
 	Aún así, el resultado total obtenido al comparar la detección automática con la realizada manualmente es muy elevado ya que las tramas identificadas erróneamente son muy pocas.
-	
+
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
@@ -221,7 +221,7 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
   Hemos usado docopt_c para gestionar los valores de las alphas. Nos parece importante observar que dependiendo de la señal de voz con la que trabajemos, se pueden conseguir mejores resultados con valores de alpha más elevados ( en el caso de que la voz tenga una potencia muy elevada y la del ruido sea baja) o más bajos (en el caso de que el hablante hable bajo). 
   El mensaje de ayuda que aparece por el terminal es el siguiente:
 
-		![alt text](image-3.png)
+![alt text](<Captura de pantalla 2024-04-27 212925.png>)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
