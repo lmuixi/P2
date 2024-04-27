@@ -141,11 +141,11 @@ Después de grabar nuestro propio audio, denominado pav_2362.wav, utilizamos Wav
 	2. ZCR (Zero Crossing Rate) de pav_2362.wav
 	3. Trama de voz de pav_2362.wav
 
-![alt text](<Captura de pantalla 2024-04-01 122523.png>)
+	![alt text](<Captura de pantalla 2024-04-01 122523-1.png>)
 
 Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de cada trama previamente definida.
 
-![alt text](<Captura de pantalla 2024-04-01 125247.png>)
+	![alt text](<Captura de pantalla 2024-04-01 125247.png>)
 
 - A la vista de la gráfica, indique qué valores considera adecuados para las magnitudes siguientes:
 
@@ -180,9 +180,9 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
-![alt text](<Captura de pantalla 2024-04-01 210824.png>)
+		![alt text](<Captura de pantalla 2024-04-01 210824.png>)
 
-![alt text](<Captura de pantalla 2024-04-01 210945.png>)
+		![alt text](<Captura de pantalla 2024-04-01 210945.png>)
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
 
@@ -190,7 +190,7 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
 	En esta área, coexisten dos tipos de errores: en primer lugar, el algoritmo no alcanza una precisión del 100% para definir ambos estados con exactitud; y en segundo lugar, al tomar decisiones manualmente, tampoco podemos ser exactos en el 100% ya que no es evidente el instante exacto en el que termina o empieza un segmento de voz o de silencio. 
 	Aún así, el resultado total obtenido al comparar la detección automática con la realizada manualmente es muy elevado ya que las tramas identificadas erróneamente son muy pocas.
 
-![alt text](image-2.png)
+		![alt text](image-2.png)
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
@@ -198,12 +198,12 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
 
 	Para trabajar con la base de datos, hemos elegido los valores de las alphas a partir de muchas pruebas y viendo con cúales se consigue un mejor resultado. Como se puede observar, el mejor resultado que hemos obtenido ha sido un 91,3%.
 
-![alt text](<Captura de pantalla 2024-04-01 211607.png>)
+		![alt text](<Captura de pantalla 2024-04-01 211607.png>)
 
 	Queremos destacar que la puntuación `TOTAL` para voz es mejor que para silencio, hecho importante a tener en cuenta dependiendo de la situación en la que se use el detector automático.
 	En el caso de utilizar-se en un meet, consideramos que es mejor confundir el silencio por voz que al revés, ya que en ese caso podríamos estar silenciado a personas que están hablando.
 
-![alt text](<Captura de pantalla 2024-04-01 211851.png>)
+		![alt text](<Captura de pantalla 2024-04-01 211851.png>)
 
 
 ### Trabajos de ampliación
@@ -222,7 +222,7 @@ Con el comando "cat pav_2326.lab" podemos visualizar las duraciones exactas de c
   Hemos usado docopt_c para gestionar los valores de las alphas. Nos parece importante observar que dependiendo de la señal de voz con la que trabajemos, se pueden conseguir mejores resultados con valores de alpha más elevados ( en el caso de que la voz tenga una potencia muy elevada y la del ruido sea baja) o más bajos (en el caso de que el hablante hable bajo). 
   El mensaje de ayuda que aparece por el terminal es el siguiente:
 
-![alt text](image-3.png)
+		![alt text](image-3.png)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
